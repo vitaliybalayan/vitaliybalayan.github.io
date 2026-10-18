@@ -1,0 +1,14 @@
+---
+import Entry from './Entry.astro';
+import { groupByMonth, type Post } from '../lib/posts';
+
+interface Props { posts: Post[] }
+const months = groupByMonth(Astro.props.posts);
+---
+{months.length === 0 && <p class="muted empty">Пока пусто — первая запись скоро.</p>}
+{months.map(({ label, items }) => (
+  <section class="month">
+    <h2 class="month-label">{label.split(' ')[0]}<span class="mono">{label.split(' ')[1]}</span></h2>
+    <ol class="entries">{items.map((post) => <Entry post={post} />)}</ol>
+  </section>
+))}

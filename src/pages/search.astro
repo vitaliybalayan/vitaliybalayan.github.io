@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Поиск — Виталий Балаян" description="Поиск по записям" nav="search">
+  <main class="wrap">
+    <section class="intro">
+      <h1>Поиск</h1>
+    </section>
+    <div class="search">
+      <input class="search-input" type="search" placeholder="Что ищем?" autocomplete="off" autofocus data-search-input aria-label="Поиск по записям" />
+      <p class="mono muted" data-search-status></p>
+      <ol class="archive-list search-results" data-search-results></ol>
+    </div>
+  </main>
+</Layout>
+
+<!-- is:inline: Vite не должен трогать импорт индекса, который появляется только после сборки. -->
+<script is:inline type="module">
+  const input = document.querySelector('[data-search-input]');
+  const status = document.querySelector('[data-search-status]');
+  const list = document.querySelector('[data-search-results]');
+
+  let pagefind = null;
+  try {
+    // Индекс создаётся при `npm run build`; в dev-режиме его нет.
+    pagefind = await import('/pagefind/pagefind.js');
+  } catch {
+    status.textContent = 'Поиск работает в собранной версии сайта (npm run build && npm run preview).';
+    input.disabled = true;
+  }
+
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+
+  async function run() {
+    if (!pagefind) return;
+    const q = input.value.trim();
+    const url = new URL(location.href);
+    if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+
+    if (!q) { list.innerHTML = ''; status.textContent = ''; return; }
+    const search = await pagefind.debouncedSearch(q);
+    if (!search) return; // перебит более новым запросом
+    const items = await Promise.all(search.results.slice(0, 30).map((r) => r.data()));
+    status.textContent = items.length ? `Найдено: ${search.results.length}` : 'Ничего не найдено';
+    // excerpt от Pagefind уже экранирован и содержит только <mark>.
+    list.innerHTML = items.map((r) => `
+      <li>
+        <span class="mono kind">${esc(r.filters.kind?.[0] ?? '')}</span>
+        <a href="${esc(r.url)}">${esc(r.meta.title ?? r.url)}</a>
+        <p class="search-excerpt">${r.excerpt}</p>
+      </li>`).join('');
+  }
+
+  input.addEventListener('input', run);
+  const initial = new URLSearchParams(location.search).get('q');
+  if (initial) { input.value = initial; run(); }
+</script>

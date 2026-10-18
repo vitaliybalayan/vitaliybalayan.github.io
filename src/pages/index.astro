@@ -1,11 +1,28 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Feed from '../components/Feed.astro';
+import FilterBar from '../components/FilterBar.astro';
+import { getPosts, HOME_LIMIT } from '../lib/posts';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const posts = await getPosts();
+const latest = posts[0]?.data.date;
 ---
+<Layout title="Виталий Балаян — лог работ" description="Хронология моих работ, релизов и заметок." nav="feed">
+  <main class="wrap">
+    <section class="intro">
+      <h1>Лог работ,<br /><em>от свежего к старому.</em></h1>
+      <p>Лента работ, релизов и заметок — между блогом и changelog. Новое сверху.</p>
+      <div class="intro-meta mono">
+        <span><b>{posts.length}</b> записей</span>
+        {latest && <span>обновлено <b>{latest.toLocaleDateString('ru-RU')}</b></span>}
+      </div>
+    </section>
 
-<Layout>
-	<Welcome />
+    <FilterBar posts={posts} active="all" />
+    <Feed posts={posts.slice(0, HOME_LIMIT)} />
+
+    {posts.length > HOME_LIMIT && (
+      <nav class="pager mono"><span /><a href="/archive/">Весь архив · {posts.length} →</a><span /></nav>
+    )}
+  </main>
 </Layout>

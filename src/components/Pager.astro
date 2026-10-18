@@ -1,0 +1,13 @@
+---
+import type { Page } from 'astro';
+
+interface Props { page: Page<unknown> }
+const { page } = Astro.props;
+---
+{page.lastPage > 1 && (
+  <nav class="pager mono" aria-label="Страницы">
+    {page.url.prev ? <a href={page.url.prev}>← новее</a> : <span />}
+    <span class="muted">{page.currentPage} / {page.lastPage}</span>
+    {page.url.next ? <a href={page.url.next}>старее →</a> : <span />}
+  </nav>
+)}

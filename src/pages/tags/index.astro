@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPosts, getTags, tagSlug } from '../../lib/posts';
+
+const tags = getTags(await getPosts()).sort((a, b) => a[0].localeCompare(b[0], 'ru'));
+---
+<Layout title="Теги — Виталий Балаян" description="Все темы записей">
+  <main class="wrap">
+    <section class="intro">
+      <h1>Теги</h1>
+      <div class="intro-meta mono"><span><b>{tags.length}</b> тегов</span></div>
+    </section>
+    <div class="tag-cloud">
+      {tags.map(([t, n]) => <a class="tag" href={`/tags/${tagSlug(t)}/`}>#{t} <span class="count">{n}</span></a>)}
+    </div>
+  </main>
+</Layout>

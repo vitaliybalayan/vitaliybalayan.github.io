@@ -1,0 +1,29 @@
+---
+import { render } from 'astro:content';
+import MediaGrid from './MediaGrid.astro';
+import { kindLabels, shortDate, tagSlug, type Post } from '../lib/posts';
+
+interface Props { post: Post }
+const { post } = Astro.props;
+const { title, date, kind, summary, project, version, tags, cover, media } = post.data;
+const href = `/posts/${post.id}/`;
+const visual = cover ? [cover, ...media] : media;
+// Релизы и заметки короткие — показываем текст целиком прямо в ленте, как в changelog.
+const inline = kind === 'release' || kind === 'note';
+const { Content } = inline ? await render(post) : { Content: null };
+---
+<li class="entry" data-kind={kind} data-tags={tags.map(tagSlug).join(' ')}>
+  <div class="entry-meta mono">
+    <time datetime={date.toISOString()}>{shortDate(date)}</time>
+    <span class="kind">{kindLabels[kind]}</span>
+    {project && <span>{project}</span>}
+    {version && <span class="version">{version}</span>}
+  </div>
+  <h2><a href={href}>{title}</a></h2>
+  {summary && <p class="entry-summary">{summary}</p>}
+  {Content && <div class="entry-body"><Content /></div>}
+  <MediaGrid items={visual} href={href} />
+  {tags.length > 0 && (
+    <div class="entry-tags">{tags.map((t) => <a class="tag" href={`/tags/${tagSlug(t)}/`}>#{t}</a>)}</div>
+  )}
+</li>
