@@ -33,7 +33,12 @@ const links = [
     <meta name="robots" content={INDEXING ? 'index, follow' : 'noindex, nofollow'} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="icon" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)" />
     <link rel="alternate" type="application/rss+xml" title="Виталий Балаян" href="/rss.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
