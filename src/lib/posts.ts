@@ -12,7 +12,7 @@ export const kindLabels: Record<Post['data']['kind'], string> = {
 
 export const PAGE_SIZE = 20;
 export const HOME_LIMIT = 20;
-export const TOP_TAGS = 10;
+export const TOP_TAGS = 24;
 
 /** Типы, у которых есть своя страница-фильтр. */
 export const kindRoutes = {

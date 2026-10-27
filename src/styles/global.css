@@ -197,7 +197,8 @@ button.theme-toggle:hover { transform: rotate(25deg); }
 .tag:hover { color: var(--ink); border-color: var(--ink); }
 .tag[aria-current='page'] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .tag .count { opacity: .55; }
-.tag-filter { display: flex; flex-wrap: wrap; gap: 6px; margin: calc(-1 * var(--s5)) 0 var(--s7); }
+.tag-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: calc(-1 * var(--s5)) 0 var(--s7); }
+.tag-filter .tag { font-size: 14px; padding: 6px 13px; }
 .tag-reset, .tag-more { border-style: dashed; }
 .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag-cloud .tag { font-size: 14px; padding: 6px 12px; }
