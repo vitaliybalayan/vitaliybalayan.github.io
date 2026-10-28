@@ -1,11 +1,13 @@
 ---
 import Entry from './Entry.astro';
 import { groupByMonth, type Post } from '../lib/posts';
+import { t, toLang } from '../lib/i18n';
 
 interface Props { posts: Post[] }
-const months = groupByMonth(Astro.props.posts);
+const lang = toLang(Astro.currentLocale);
+const months = groupByMonth(Astro.props.posts, lang);
 ---
-{months.length === 0 && <p class="muted empty">Пока пусто — первая запись скоро.</p>}
+{months.length === 0 && <p class="muted empty">{t(lang).empty}</p>}
 {months.map(({ label, items }) => (
   <section class="month">
     <h2 class="month-label">{label.split(' ')[0]}<span class="mono">{label.split(' ')[1]}</span></h2>

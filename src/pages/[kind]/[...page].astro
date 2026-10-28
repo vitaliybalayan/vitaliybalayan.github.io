@@ -1,35 +1,8 @@
 ---
-import type { GetStaticPaths, Page } from 'astro';
-import Layout from '../../layouts/Layout.astro';
-import Feed from '../../components/Feed.astro';
-import FilterBar from '../../components/FilterBar.astro';
-import Pager from '../../components/Pager.astro';
-import { getPosts, kindRoutes, PAGE_SIZE, type Post, type RoutedKind } from '../../lib/posts';
+import type { GetStaticPaths } from 'astro';
+import View from '../../views/KindPage.astro';
+import { kindPaths } from '../../lib/paths';
 
-export const getStaticPaths = (async ({ paginate }) => {
-  const posts = await getPosts();
-  return (Object.keys(kindRoutes) as RoutedKind[]).flatMap((kind) =>
-    paginate(posts.filter((p) => p.data.kind === kind), {
-      pageSize: PAGE_SIZE,
-      params: { kind: kindRoutes[kind].slug },
-      props: { kind, all: posts },
-    }),
-  );
-}) satisfies GetStaticPaths;
-
-interface Props { page: Page<Post>; kind: RoutedKind; all: Post[] }
-const { page, kind, all } = Astro.props;
-const { label } = kindRoutes[kind];
-const suffix = page.currentPage > 1 ? ` · стр. ${page.currentPage}` : '';
+export const getStaticPaths = (({ paginate }) => kindPaths('ru', paginate)) satisfies GetStaticPaths;
 ---
-<Layout title={`${label}${suffix} — Виталий Балаян`} description={`${label}: ${page.total} записей`} nav={kind === 'work' ? 'works' : 'feed'}>
-  <main class="wrap">
-    <section class="intro">
-      <h1>{label}</h1>
-      <div class="intro-meta mono"><span><b>{page.total}</b> записей</span></div>
-    </section>
-    <FilterBar posts={all} active={kind} />
-    <Feed posts={page.data} />
-    <Pager page={page} />
-  </main>
-</Layout>
+<View {...Astro.props} />

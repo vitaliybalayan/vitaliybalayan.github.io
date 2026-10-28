@@ -1,5 +1,6 @@
 ---
-import { getTags, kindRoutes, tagSlug, TOP_TAGS, type Post, type RoutedKind } from '../lib/posts';
+import { localePath, t, toLang } from '../lib/i18n';
+import { getTags, kindRoutes, tagHref, tagSlug, TOP_TAGS, type Post, type RoutedKind } from '../lib/posts';
 
 interface Props {
   posts: Post[];
@@ -7,12 +8,15 @@ interface Props {
   activeTag?: string;
 }
 const { posts, active, activeTag } = Astro.props;
+const lang = toLang(Astro.currentLocale);
+const tr = t(lang);
+const home = localePath(lang, '/');
 
 const kinds = [
-  { href: '/', label: 'Всё', n: posts.length, on: active === 'all' },
+  { href: home, label: tr.filter.all, n: posts.length, on: active === 'all' },
   ...Object.entries(kindRoutes).map(([kind, r]) => ({
-    href: `/${r.slug}/`,
-    label: r.label,
+    href: localePath(lang, `/${r.slug}/`),
+    label: tr.kindRoutes[kind as RoutedKind],
     n: posts.filter((p) => p.data.kind === kind).length,
     on: active === kind,
   })),
@@ -26,19 +30,19 @@ if (activeTag && !top.some(([t]) => tagSlug(t) === activeTag)) {
   if (found) top.push(found);
 }
 ---
-<nav class="filters glass" aria-label="Фильтр ленты">
+<nav class="filters glass" aria-label={tr.filter.aria}>
   {kinds.map((k) => (
     <a href={k.href} aria-current={k.on ? 'page' : undefined}>{k.label}<span class="count">{k.n}</span></a>
   ))}
 </nav>
 
 {top.length > 0 && (
-  <nav class="tag-filter" aria-label="Теги">
+  <nav class="tag-filter" aria-label={tr.filter.tags}>
     {top.map(([t, n]) => {
       const on = tagSlug(t) === activeTag;
-      return <a class="tag" href={on ? '/' : `/tags/${tagSlug(t)}/`} aria-current={on ? 'page' : undefined}>#{t} <span class="count">{n}</span></a>;
+      return <a class="tag" href={on ? home : tagHref(lang, t)} aria-current={on ? 'page' : undefined}>#{t} <span class="count">{n}</span></a>;
     })}
-    {allTags.length > top.length && <a class="tag tag-more" href="/tags/">все теги →</a>}
-    {activeTag && <a class="tag tag-reset" href="/">× сбросить</a>}
+    {allTags.length > top.length && <a class="tag tag-more" href={localePath(lang, '/tags/')}>{tr.filter.allTags}</a>}
+    {activeTag && <a class="tag tag-reset" href={home}>{tr.filter.reset}</a>}
   </nav>
 )}

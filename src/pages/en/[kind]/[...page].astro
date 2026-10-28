@@ -1,0 +1,8 @@
+---
+import type { GetStaticPaths } from 'astro';
+import View from '../../../views/KindPage.astro';
+import { kindPaths } from '../../../lib/paths';
+
+export const getStaticPaths = (({ paginate }) => kindPaths('en', paginate)) satisfies GetStaticPaths;
+---
+<View {...Astro.props} />

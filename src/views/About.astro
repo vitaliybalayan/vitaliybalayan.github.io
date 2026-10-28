@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getPosts, getTags, tagHref } from '../lib/posts';
+import { localePath, t, toLang } from '../lib/i18n';
+
+const lang = toLang(Astro.currentLocale);
+const tr = t(lang);
+const tags = getTags(await getPosts(lang)).slice(0, 12);
+---
+<Layout title={`${tr.about.title} — ${tr.name}`} description={tr.about.description} nav="about">
+  <main class="prose-wrap">
+    <section class="intro">
+      <h1>{tr.about.title}</h1>
+      <div class="prose">
+        {tr.about.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+    </section>
+
+    <div class="about-grid">
+      <div>
+        <h3>{tr.about.contact}</h3>
+        <ul>
+          <li><a href="https://t.me/vitaliybalayan">Telegram ↗</a></li>
+          <li><a href="https://instagram.com/vitaliybalayan">Instagram ↗</a></li>
+          <li><a href="https://github.com/vitaliybalayan">GitHub ↗</a></li>
+          <li><a href="https://wa.me/77086227977">WhatsApp ↗</a></li>
+          <li><a href={localePath(lang, '/rss.xml')}>RSS</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>{tr.about.topics}</h3>
+        <div class="entry-tags">{tags.map(([t, n]) => <a class="tag" href={tagHref(lang, t)}>#{t} {n}</a>)}</div>
+      </div>
+    </div>
+  </main>
+</Layout>

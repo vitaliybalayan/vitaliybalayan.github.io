@@ -1,34 +1,8 @@
 ---
-import type { GetStaticPaths, Page } from 'astro';
-import Layout from '../../../layouts/Layout.astro';
-import Feed from '../../../components/Feed.astro';
-import FilterBar from '../../../components/FilterBar.astro';
-import Pager from '../../../components/Pager.astro';
-import { getPosts, getTags, PAGE_SIZE, tagSlug, type Post } from '../../../lib/posts';
+import type { GetStaticPaths } from 'astro';
+import View from '../../../views/TagPage.astro';
+import { tagPaths } from '../../../lib/paths';
 
-export const getStaticPaths = (async ({ paginate }) => {
-  const posts = await getPosts();
-  return getTags(posts).flatMap(([tag]) =>
-    paginate(posts.filter((p) => p.data.tags.includes(tag)), {
-      pageSize: PAGE_SIZE,
-      params: { tag: tagSlug(tag) },
-      props: { tag, all: posts },
-    }),
-  );
-}) satisfies GetStaticPaths;
-
-interface Props { page: Page<Post>; tag: string; all: Post[] }
-const { page, tag, all } = Astro.props;
-const suffix = page.currentPage > 1 ? ` · стр. ${page.currentPage}` : '';
+export const getStaticPaths = (({ paginate }) => tagPaths('ru', paginate)) satisfies GetStaticPaths;
 ---
-<Layout title={`#${tag}${suffix} — Виталий Балаян`} description={`Записи с тегом ${tag}`}>
-  <main class="wrap">
-    <section class="intro">
-      <h1>#{tag}</h1>
-      <div class="intro-meta mono"><span><b>{page.total}</b> записей</span></div>
-    </section>
-    <FilterBar posts={all} activeTag={tagSlug(tag)} />
-    <Feed posts={page.data} />
-    <Pager page={page} />
-  </main>
-</Layout>
+<View {...Astro.props} />

@@ -1,13 +1,15 @@
 ---
 import type { Page } from 'astro';
+import { t, toLang } from '../lib/i18n';
 
 interface Props { page: Page<unknown> }
 const { page } = Astro.props;
+const tr = t(toLang(Astro.currentLocale)).pager;
 ---
 {page.lastPage > 1 && (
-  <nav class="pager mono" aria-label="Страницы">
-    {page.url.prev ? <a href={page.url.prev}>← новее</a> : <span />}
+  <nav class="pager mono" aria-label={tr.aria}>
+    {page.url.prev ? <a href={page.url.prev}>{tr.newer}</a> : <span />}
     <span class="muted">{page.currentPage} / {page.lastPage}</span>
-    {page.url.next ? <a href={page.url.next}>старее →</a> : <span />}
+    {page.url.next ? <a href={page.url.next}>{tr.older}</a> : <span />}
   </nav>
 )}

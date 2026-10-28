@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getPosts, getTags, tagHref } from '../lib/posts';
+import { t, toLang } from '../lib/i18n';
+
+const lang = toLang(Astro.currentLocale);
+const tr = t(lang);
+const tags = getTags(await getPosts(lang)).sort((a, b) => a[0].localeCompare(b[0], lang));
+---
+<Layout title={`${tr.tags.title} — ${tr.name}`} description={tr.tags.description}>
+  <main class="wrap">
+    <section class="intro">
+      <h1>{tr.tags.title}</h1>
+      <div class="intro-meta mono"><span><b>{tags.length}</b> {tr.tags.count}</span></div>
+    </section>
+    <div class="tag-cloud">
+      {tags.map(([t, n]) => <a class="tag" href={tagHref(lang, t)}>#{t} <span class="count">{n}</span></a>)}
+    </div>
+  </main>
+</Layout>

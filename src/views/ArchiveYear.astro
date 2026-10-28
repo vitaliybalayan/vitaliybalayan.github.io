@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Feed from '../components/Feed.astro';
+import type { Post } from '../lib/posts';
+import { localePath, t, toLang } from '../lib/i18n';
+
+interface Props { year: number; posts: Post[]; newer?: number; older?: number }
+const { year, posts, newer, older } = Astro.props;
+const lang = toLang(Astro.currentLocale);
+const tr = t(lang);
+---
+<Layout title={`${year} — ${tr.name}`} description={tr.archive.year(year)} nav="archive">
+  <main class="wrap">
+    <section class="intro">
+      <a class="back" href={localePath(lang, '/archive/')}>{tr.archive.back}</a>
+      <h1>{year}</h1>
+      <div class="intro-meta mono"><span><b>{posts.length}</b> {tr.entries}</span></div>
+    </section>
+    <Feed posts={posts} />
+    <nav class="pager mono" aria-label={tr.archive.yearsAria}>
+      {newer ? <a href={localePath(lang, `/archive/${newer}/`)}>← {newer}</a> : <span />}
+      <span />
+      {older ? <a href={localePath(lang, `/archive/${older}/`)}>{older} →</a> : <span />}
+    </nav>
+  </main>
+</Layout>

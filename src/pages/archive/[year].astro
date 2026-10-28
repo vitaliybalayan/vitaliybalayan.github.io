@@ -1,31 +1,7 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Feed from '../../components/Feed.astro';
-import { getPosts, groupByYear, type Post } from '../../lib/posts';
+import View from '../../views/ArchiveYear.astro';
+import { yearPaths } from '../../lib/paths';
 
-export async function getStaticPaths() {
-  const years = groupByYear(await getPosts());
-  return years.map(([year, posts], i) => ({
-    params: { year: String(year) },
-    props: { year, posts, newer: years[i - 1]?.[0], older: years[i + 1]?.[0] },
-  }));
-}
-
-interface Props { year: number; posts: Post[]; newer?: number; older?: number }
-const { year, posts, newer, older } = Astro.props;
+export const getStaticPaths = () => yearPaths('ru');
 ---
-<Layout title={`${year} — Виталий Балаян`} description={`Записи за ${year} год`} nav="archive">
-  <main class="wrap">
-    <section class="intro">
-      <a class="back" href="/archive/">← Архив</a>
-      <h1>{year}</h1>
-      <div class="intro-meta mono"><span><b>{posts.length}</b> записей</span></div>
-    </section>
-    <Feed posts={posts} />
-    <nav class="pager mono" aria-label="Годы">
-      {newer ? <a href={`/archive/${newer}/`}>← {newer}</a> : <span />}
-      <span />
-      {older ? <a href={`/archive/${older}/`}>{older} →</a> : <span />}
-    </nav>
-  </main>
-</Layout>
+<View {...Astro.props} />

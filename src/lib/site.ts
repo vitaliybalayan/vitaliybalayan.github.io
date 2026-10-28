@@ -5,4 +5,6 @@
  */
 export const INDEXING = true;
 
+export const TELEGRAM_URL = 'https://t.me/vitaliybalayan';
+
 export const DEFAULT_OG_IMAGE = '/og-default.png';

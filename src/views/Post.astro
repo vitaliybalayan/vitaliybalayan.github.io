@@ -1,0 +1,53 @@
+---
+import { render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import MediaGrid from '../components/MediaGrid.astro';
+import { formatDate, kindLabels, postHref, tagHref, type Post } from '../lib/posts';
+import { localePath, t, toLang } from '../lib/i18n';
+
+interface Props { post: Post; newer?: Post; older?: Post }
+const { post, newer, older } = Astro.props;
+const { title, date, kind, summary, project, version, tags, cover, media, links } = post.data;
+const { Content } = await render(post);
+const nav = kind === 'work' ? 'works' : 'feed';
+const lang = toLang(Astro.currentLocale);
+const tr = t(lang);
+const kindLabel = kindLabels(lang)[kind];
+---
+<Layout title={`${title} — ${tr.name}`} description={summary ?? title} image={cover?.src ?? media[0]?.src} nav={nav}>
+  <main data-pagefind-body>
+    <header class="prose-wrap post-head" data-kind={kind}>
+      <a class="back" href={localePath(lang, '/')} data-pagefind-ignore>{tr.post.back}</a>
+      <div class="entry-meta mono" data-pagefind-ignore>
+        <time datetime={date.toISOString()}>{formatDate(date, lang)}</time>
+        <span class="kind">{kindLabel}</span>
+        {project && <span>{project}</span>}
+        {version && <span class="version">{version}</span>}
+      </div>
+      <h1 data-pagefind-meta="title">{title}</h1>
+      <span hidden data-pagefind-filter="kind">{kindLabel}</span>
+      {summary && <p class="lead">{summary}</p>}
+    </header>
+
+    {cover && <div class="post-cover"><MediaGrid items={[cover]} eager /></div>}
+
+    <article class="prose-wrap">
+      <div class="prose"><Content /></div>
+
+      {media.length > 0 && <div class="post-gallery"><MediaGrid items={media} /></div>}
+
+      {links.length > 0 && (
+        <div class="post-links">{links.map((l) => <a class="btn-link" href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>)}</div>
+      )}
+
+      {tags.length > 0 && (
+        <div class="entry-tags">{tags.map((t) => <a class="tag" href={tagHref(lang, t)}>#{t}</a>)}</div>
+      )}
+
+      <nav class="post-nav" data-pagefind-ignore aria-label={tr.post.adjacentAria}>
+        {older && <a href={postHref(older)}><span class="mono">{tr.post.older}</span><strong>{older.data.title}</strong></a>}
+        {newer && <a class="next" href={postHref(newer)}><span class="mono">{tr.post.newer}</span><strong>{newer.data.title}</strong></a>}
+      </nav>
+    </article>
+  </main>
+</Layout>

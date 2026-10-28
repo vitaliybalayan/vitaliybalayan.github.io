@@ -1,0 +1,26 @@
+---
+import type { Page } from 'astro';
+import Layout from '../layouts/Layout.astro';
+import Feed from '../components/Feed.astro';
+import FilterBar from '../components/FilterBar.astro';
+import Pager from '../components/Pager.astro';
+import type { Post, RoutedKind } from '../lib/posts';
+import { t, toLang } from '../lib/i18n';
+
+interface Props { page: Page<Post>; kind: RoutedKind; all: Post[] }
+const { page, kind, all } = Astro.props;
+const tr = t(toLang(Astro.currentLocale));
+const label = tr.kindRoutes[kind];
+const suffix = page.currentPage > 1 ? ` · ${tr.pager.page} ${page.currentPage}` : '';
+---
+<Layout title={`${label}${suffix} — ${tr.name}`} description={`${label}: ${page.total} ${tr.entries}`} nav={kind === 'work' ? 'works' : 'feed'}>
+  <main class="wrap">
+    <section class="intro">
+      <h1>{label}</h1>
+      <div class="intro-meta mono"><span><b>{page.total}</b> {tr.entries}</span></div>
+    </section>
+    <FilterBar posts={all} active={kind} />
+    <Feed posts={page.data} />
+    <Pager page={page} />
+  </main>
+</Layout>

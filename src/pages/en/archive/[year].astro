@@ -1,0 +1,7 @@
+---
+import View from '../../../views/ArchiveYear.astro';
+import { yearPaths } from '../../../lib/paths';
+
+export const getStaticPaths = () => yearPaths('en');
+---
+<View {...Astro.props} />

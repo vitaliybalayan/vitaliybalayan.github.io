@@ -1,0 +1,25 @@
+---
+import type { Page } from 'astro';
+import Layout from '../layouts/Layout.astro';
+import Feed from '../components/Feed.astro';
+import FilterBar from '../components/FilterBar.astro';
+import Pager from '../components/Pager.astro';
+import { tagSlug, type Post } from '../lib/posts';
+import { t, toLang } from '../lib/i18n';
+
+interface Props { page: Page<Post>; tag: string; all: Post[] }
+const { page, tag, all } = Astro.props;
+const tr = t(toLang(Astro.currentLocale));
+const suffix = page.currentPage > 1 ? ` · ${tr.pager.page} ${page.currentPage}` : '';
+---
+<Layout title={`#${tag}${suffix} — ${tr.name}`} description={tr.tags.withTag(tag)} alternate="/tags/">
+  <main class="wrap">
+    <section class="intro">
+      <h1>#{tag}</h1>
+      <div class="intro-meta mono"><span><b>{page.total}</b> {tr.entries}</span></div>
+    </section>
+    <FilterBar posts={all} activeTag={tagSlug(tag)} />
+    <Feed posts={page.data} />
+    <Pager page={page} />
+  </main>
+</Layout>
