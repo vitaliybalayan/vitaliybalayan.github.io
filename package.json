@@ -19,7 +19,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "animejs": "^3.2.2",
-    "astro": "^7.3.5",
+    "astro": "^7.4.7",
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
